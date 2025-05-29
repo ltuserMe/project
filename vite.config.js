@@ -14,7 +14,7 @@ export default defineConfig({
     //     target: "http://47.120.6.86:5000/",
     //     // rewrite: (path) => path.replace(new RegExp("^" + "/dev-api"), ""),
     //   },
-    },
+    // },
   },
   resolve: {
     alias: {
