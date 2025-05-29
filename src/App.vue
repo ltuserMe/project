@@ -16,7 +16,8 @@ const toggleDark = useToggle(isDark);
 const isLoading = ref(false);
 const error = ref(null);
 
-const BASE_URL = "https://zqdflfawkqxt.sealoshzh.site";
+// const BASE_URL = "https://zqdflfawkqxt.sealoshzh.site";
+const BASE_URL = "http://47.120.6.86:5000";
 // const BASE_URL = 'https://ztdgmvcggyyl.sealoshzh.site'
 
 const todos = ref([]);
@@ -56,12 +57,14 @@ const showSuccess = (message) => {
 };
 
 // 修改 axios 默认配置
-axios.defaults.baseURL = 'https://zqdflfawkqxt.sealoshzh.site';
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+// axios.defaults.baseURL = 'https://zqdflfawkqxt.sealoshzh.site';
+axios.defaults.baseURL = "http://47.120.6.86:5000";
+
+axios.defaults.headers.common["Content-Type"] = "application/json";
 
 // 修改 axios 请求拦截器
 axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -75,9 +78,9 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       // token 过期或无效
       logout();
-      showError('登录已过期，请重新登录');
+      showError("登录已过期，请重新登录");
     } else if (error.response?.status === 403) {
-      showError('没有权限执行此操作');
+      showError("没有权限执行此操作");
     }
     return Promise.reject(error);
   }
@@ -87,18 +90,18 @@ axios.interceptors.response.use(
 async function fetchTodos() {
   try {
     isLoading.value = true;
-    const response = await axios.get('/api/get-todo');
+    const response = await axios.get("/api/get-todo");
     if (response.data.success) {
-      todos.value = response.data.data.map(todo => ({
+      todos.value = response.data.data.map((todo) => ({
         id: todo._id,
         text: todo.value,
         completed: todo.isCompleted,
         createdAt: new Date(todo.createdAt), // 添加创建时间
-        updatedAt: new Date(todo.updatedAt)  // 添加更新时间
+        updatedAt: new Date(todo.updatedAt), // 添加更新时间
       }));
     }
   } catch (err) {
-    handleApiError(err, '获取待办事项失败');
+    handleApiError(err, "获取待办事项失败");
   } finally {
     isLoading.value = false;
   }
@@ -107,28 +110,29 @@ async function fetchTodos() {
 // 添加新的待办事项
 async function addTodo() {
   if (!newTodo.value.trim()) return;
-  
+
   try {
     isLoading.value = true;
-    const response = await axios.post('/api/add-todo', {
+    const response = await axios.post("/api/add-todo", {
       value: newTodo.value.trim(),
-      isCompleted: false
+      isCompleted: false,
     });
 
     if (response.data.success) {
-      const { _id, value, isCompleted, createdAt, updatedAt } = response.data.data;
+      const { _id, value, isCompleted, createdAt, updatedAt } =
+        response.data.data;
       todos.value.push({
         id: _id,
         text: value,
         completed: isCompleted,
         createdAt: new Date(createdAt),
-        updatedAt: new Date(updatedAt)
+        updatedAt: new Date(updatedAt),
       });
-      newTodo.value = '';
-      showSuccess('添加成功');
+      newTodo.value = "";
+      showSuccess("添加成功");
     }
   } catch (err) {
-    handleApiError(err, '添加待办事项失败');
+    handleApiError(err, "添加待办事项失败");
   } finally {
     isLoading.value = false;
   }
@@ -139,17 +143,17 @@ async function toggleTodoStatus(todo) {
   try {
     isLoading.value = true;
     const response = await axios.post(`/api/update-todo/${todo.id}`);
-    
+
     if (response.data.success) {
       const { isCompleted, updatedAt } = response.data.data;
-      const index = todos.value.findIndex(t => t.id === todo.id);
+      const index = todos.value.findIndex((t) => t.id === todo.id);
       if (index !== -1) {
         todos.value[index].completed = isCompleted;
         todos.value[index].updatedAt = new Date(updatedAt);
       }
     }
   } catch (err) {
-    handleApiError(err, '更新待办事项失败');
+    handleApiError(err, "更新待办事项失败");
     todo.completed = !todo.completed; // 回滚状态
   } finally {
     isLoading.value = false;
@@ -201,10 +205,10 @@ const completionRate = computed(() => {
 // 修改页面加载时的初始化逻辑
 onMounted(async () => {
   // 检查是否有token
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     isLoggedIn.value = true;
-    phone.value = localStorage.getItem('phone');
+    phone.value = localStorage.getItem("phone");
     try {
       // 先获取用户信息
       await fetchUserInfo();
@@ -214,7 +218,7 @@ onMounted(async () => {
       // 如果获取失败（比如token过期），则退出登录
       if (err.response?.status === 401) {
         logout();
-        showError('登录已过期，请重新登录');
+        showError("登录已过期，请重新登录");
       }
     }
   }
@@ -243,16 +247,16 @@ const uploadAvatar = () => {
 const handleAvatarChange = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
-  
+
   // 验证文件类型
-  if (!file.type.startsWith('image/')) {
-    showError('只能上传图片文件');
+  if (!file.type.startsWith("image/")) {
+    showError("只能上传图片文件");
     return;
   }
-  
+
   // 验证文件大小（5MB）
   if (file.size > 5 * 1024 * 1024) {
-    showError('图片大小不能超过5MB');
+    showError("图片大小不能超过5MB");
     return;
   }
 
@@ -262,27 +266,27 @@ const handleAvatarChange = async (event) => {
   try {
     isLoading.value = true;
     const formData = new FormData();
-    formData.append('avatar', file);
+    formData.append("avatar", file);
 
-    const response = await axios.post('/api/user/upload-avatar', formData, {
+    const response = await axios.post("/api/user/upload-avatar", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        "Content-Type": "multipart/form-data",
+      },
     });
 
     if (response.data.success) {
       userInfo.value.avatar = response.data.data.avatar;
-      showSuccess('头像上传成功');
+      showSuccess("头像上传成功");
       await saveUserInfo();
     }
   } catch (err) {
-    handleApiError(err, '头像上传失败');
+    handleApiError(err, "头像上传失败");
     userInfo.value.avatar = userInfo.value.originalAvatar;
   } finally {
     isLoading.value = false;
     URL.revokeObjectURL(localPreview);
     if (avatarInput.value) {
-      avatarInput.value.value = '';
+      avatarInput.value.value = "";
     }
   }
 };
@@ -291,18 +295,18 @@ const handleAvatarChange = async (event) => {
 const saveUserInfo = async () => {
   try {
     isLoading.value = true;
-    const response = await axios.post('/api/user/update', {
+    const response = await axios.post("/api/user/update", {
       nickname: userInfo.value.nickname,
-      avatar: userInfo.value.avatar
+      avatar: userInfo.value.avatar,
     });
-    
+
     if (response.data.success) {
       userInfo.value.originalAvatar = userInfo.value.avatar;
-      showSuccess('保存成功');
+      showSuccess("保存成功");
       showUserProfile.value = false;
     }
   } catch (err) {
-    handleApiError(err, '保存失败');
+    handleApiError(err, "保存失败");
     userInfo.value.avatar = userInfo.value.originalAvatar;
   } finally {
     isLoading.value = false;
@@ -312,18 +316,18 @@ const saveUserInfo = async () => {
 // 获取用户信息
 const fetchUserInfo = async () => {
   try {
-    const response = await axios.get('/api/user/info');
+    const response = await axios.get("/api/user/info");
     if (response.data.success) {
       const { nickname, avatar, createdAt } = response.data.data;
       userInfo.value = {
         nickname,
         avatar,
         originalAvatar: avatar,
-        createdAt: new Date(createdAt)
+        createdAt: new Date(createdAt),
       };
     }
   } catch (err) {
-    handleApiError(err, '获取用户信息失败');
+    handleApiError(err, "获取用户信息失败");
     throw err;
   }
 };
@@ -331,28 +335,28 @@ const fetchUserInfo = async () => {
 // 修改登录成功处理函数的顺序
 const handleLoginSuccess = async () => {
   isLoggedIn.value = true;
-  phone.value = localStorage.getItem('phone');
+  phone.value = localStorage.getItem("phone");
   try {
     // 先获取用户信息
     await fetchUserInfo();
     // 再获取待办事项
     await fetchTodos();
   } catch (err) {
-    showError('获取用户信息失败');
+    showError("获取用户信息失败");
   }
 };
 
 // 修改登出函数，清除用户信息
 const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('phone');
+  localStorage.removeItem("token");
+  localStorage.removeItem("phone");
   isLoggedIn.value = false;
   todos.value = [];
   // 清除用户信息
   userInfo.value = {
-    nickname: '',
-    avatar: '',
-    originalAvatar: ''
+    nickname: "",
+    avatar: "",
+    originalAvatar: "",
   };
 };
 
@@ -378,15 +382,15 @@ const handleLogout = () => {
 // 添加列表动画效果
 const onBeforeEnter = (el) => {
   el.style.opacity = 0;
-  el.style.transform = 'translateY(30px)';
+  el.style.transform = "translateY(30px)";
 };
 
 const onEnter = (el, done) => {
   const delay = el.dataset.index * 100;
   setTimeout(() => {
-    el.style.transition = 'all 0.3s ease';
+    el.style.transition = "all 0.3s ease";
     el.style.opacity = 1;
-    el.style.transform = 'translateY(0)';
+    el.style.transform = "translateY(0)";
     done();
   }, delay);
 };
@@ -394,34 +398,38 @@ const onEnter = (el, done) => {
 const onLeave = (el, done) => {
   const delay = el.dataset.index * 50;
   setTimeout(() => {
-    el.style.transition = 'all 0.2s ease';
+    el.style.transition = "all 0.2s ease";
     el.style.opacity = 0;
-    el.style.transform = 'translateY(-30px)';
+    el.style.transform = "translateY(-30px)";
     done();
   }, delay);
 };
 
 // 监听列表变化，自动滚动到新添加的项
-watch(todos, (newTodos, oldTodos) => {
-  if (newTodos.length > oldTodos.length) {
-    // 新增项时，等待动画完成后滚动到底部
-    nextTick(() => {
-      setTimeout(() => {
-        const container = document.querySelector('.overflow-y-auto');
-        if (container) {
-          container.scrollTo({
-            top: container.scrollHeight,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    });
-  }
-}, { deep: true });
+watch(
+  todos,
+  (newTodos, oldTodos) => {
+    if (newTodos.length > oldTodos.length) {
+      // 新增项时，等待动画完成后滚动到底部
+      nextTick(() => {
+        setTimeout(() => {
+          const container = document.querySelector(".overflow-y-auto");
+          if (container) {
+            container.scrollTo({
+              top: container.scrollHeight,
+              behavior: "smooth",
+            });
+          }
+        }, 100);
+      });
+    }
+  },
+  { deep: true }
+);
 
 // 统一的错误处理函数
 function handleApiError(err, defaultMessage) {
-  const errorMessage = err.response?.data?.error || err.message || '未知错误';
+  const errorMessage = err.response?.data?.error || err.message || "未知错误";
   showError(`${defaultMessage}：${errorMessage}`);
 }
 </script>
@@ -563,7 +571,8 @@ function handleApiError(err, defaultMessage) {
                         'text-red-500 dark:text-red-400': completionRate < 30,
                         'text-yellow-500 dark:text-yellow-400':
                           completionRate >= 30 && completionRate < 70,
-                        'text-green-500 dark:text-green-400': completionRate >= 70,
+                        'text-green-500 dark:text-green-400':
+                          completionRate >= 70,
                       }"
                     >
                       {{ completionRate }}%
@@ -626,13 +635,15 @@ function handleApiError(err, defaultMessage) {
           </div>
 
           <!-- 可滚动的待办事项列表区域 -->
-          <div class="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth" 
-               style="scroll-behavior: smooth;">
+          <div
+            class="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth"
+            style="scroll-behavior: smooth"
+          >
             <div class="container mx-auto px-4 pb-6 max-w-3xl">
               <div class="space-y-3">
-                <TransitionGroup 
-                  name="list" 
-                  tag="div" 
+                <TransitionGroup
+                  name="list"
+                  tag="div"
                   class="space-y-3"
                   @before-enter="onBeforeEnter"
                   @enter="onEnter"
@@ -642,8 +653,7 @@ function handleApiError(err, defaultMessage) {
                     v-for="(todo, index) in filteredTodos"
                     :key="todo.id"
                     :data-index="index"
-                    class="flex items-center gap-3 p-4 glass-effect rounded-xl shadow-soft 
-                           hover:shadow-lg transition-all duration-200 transform"
+                    class="flex items-center gap-3 p-4 glass-effect rounded-xl shadow-soft hover:shadow-lg transition-all duration-200 transform"
                   >
                     <input
                       type="checkbox"
@@ -890,30 +900,49 @@ function handleApiError(err, defaultMessage) {
           enter-from-class="opacity-0 transform translate-y-2"
           leave-to-class="opacity-0 transform translate-y-2"
         >
-          <div 
-            v-if="error || success" 
+          <div
+            v-if="error || success"
             class="fixed inset-x-0 top-4 flex justify-center items-center z-50 px-4"
           >
-            <div 
-              class="glass-effect px-6 py-3 rounded-xl shadow-soft max-w-md w-full 
-                     flex items-center gap-2"
+            <div
+              class="glass-effect px-6 py-3 rounded-xl shadow-soft max-w-md w-full flex items-center gap-2"
               :class="{
                 'bg-red-500/90 text-white': error,
-                'bg-green-500/90 text-white': success
+                'bg-green-500/90 text-white': success,
               }"
             >
               <!-- 错误图标 -->
-              <svg v-if="error" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                v-if="error"
+                class="w-5 h-5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
-              
+
               <!-- 成功图标 -->
-              <svg v-if="success" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                v-if="success"
+                class="w-5 h-5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
-              
+
               <span class="text-sm font-medium">{{ error || success }}</span>
             </div>
           </div>
