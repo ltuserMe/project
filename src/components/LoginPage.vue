@@ -157,7 +157,9 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 const emit = defineEmits(['login-success'])
-const BASE_URL = 'https://zqdflfawkqxt.sealoshzh.site'
+// const BASE_URL = 'https://zqdflfawkqxt.sealoshzh.site'
+// const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'http://47.120.6.86:5000'
 
 const phone = ref('')
 const code = ref('')
