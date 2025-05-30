@@ -1,4 +1,6 @@
 import { createStore } from 'vuex'
+import user from './modules/user'
+import todo from './modules/todo'
 
 export default createStore({
   state: {
@@ -14,6 +16,7 @@ export default createStore({
     // 异步操作
   },
   modules: {
-    // 模块化状态管理
+    user,
+    todo
   }
 }) 
