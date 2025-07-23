@@ -153,109 +153,103 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref } from 'vue';
+import request from '@/api/request';
+const emit = defineEmits(['login-success']);
 
-const emit = defineEmits(['login-success'])
-const BASE_URL = 'http://47.120.6.86:5000'
+const phone = ref('');
+const code = ref('');
+const countdown = ref(0);
+const isLoading = ref(false);
+const error = ref(null);
+const phoneError = ref('');
+const codeError = ref('');
 
-const phone = ref('')
-const code = ref('')
-const countdown = ref(0)
-const isLoading = ref(false)
-const error = ref(null)
-const phoneError = ref('')
-const codeError = ref('')
-
-let errorTimer = null
+let errorTimer = null;
 
 const showError = (message) => {
-  error.value = message
-  if (errorTimer) clearTimeout(errorTimer)
+  error.value = message;
+  if (errorTimer) clearTimeout(errorTimer);
   errorTimer = setTimeout(() => {
-    error.value = null
-  }, 2000)
-}
+    error.value = null;
+  }, 2000);
+};
 
 const validatePhone = () => {
-  phoneError.value = ''
+  phoneError.value = '';
   if (!phone.value) {
-    phoneError.value = '请输入手机号'
-    return false
+    phoneError.value = '请输入手机号';
+    return false;
   }
   if (!/^1[3-9]\d{9}$/.test(phone.value)) {
-    phoneError.value = '请输入正确的手机号'
-    return false
+    phoneError.value = '请输入正确的手机号';
+    return false;
   }
-  return true
-}
+  return true;
+};
 
 const validateCode = () => {
-  codeError.value = ''
+  codeError.value = '';
   if (!code.value) {
-    codeError.value = '请输入验证码'
-    return false
+    codeError.value = '请输入验证码';
+    return false;
   }
   if (!/^\d{6}$/.test(code.value)) {
-    codeError.value = '请输入6位数字验证码'
-    return false
+    codeError.value = '请输入6位数字验证码';
+    return false;
   }
-  return true
-}
+  return true;
+};
 
 const sendCode = async () => {
-  if (!validatePhone()) return
-  
+  if (!validatePhone()) return;
   try {
-    isLoading.value = true
-    const response = await axios.post(`${BASE_URL}/api/send-code`, {
+    isLoading.value = true;
+    const response = await request.post('/api/send-code', {
       phone: phone.value
-    })
-    
-    if (response.data.success) {
-      countdown.value = 60
+    });
+    if (response.success) {
+      countdown.value = 60;
       const timer = setInterval(() => {
-        countdown.value--
+        countdown.value--;
         if (countdown.value <= 0) {
-          clearInterval(timer)
+          clearInterval(timer);
         }
-      }, 1000)
-      code.value = response.data.code || ''
-      showError('验证码已自动填入输入框')
+      }, 1000);
+      code.value = response.code || '';
+      showError('验证码已自动填入输入框');
     } else {
-      throw new Error(response.data.error)
+      throw new Error(response.error);
     }
   } catch (err) {
-    showError('获取验证码失败：' + (err.response?.data?.error || err.message || '未知错误'))
+    showError('获取验证码失败：' + (err.message || '未知错误'));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const login = async () => {
-  if (!validatePhone() || !validateCode()) return
-  
+  if (!validatePhone() || !validateCode()) return;
   try {
-    isLoading.value = true
-    const response = await axios.post(`${BASE_URL}/api/login`, {
+    isLoading.value = true;
+    const response = await request.post('/api/login', {
       phone: phone.value,
       code: code.value
-    })
-    
-    if (response.data.success) {
-      const { token } = response.data.data
-      localStorage.setItem('token', token)
-      localStorage.setItem('phone', phone.value)
-      emit('login-success')
+    });
+    if (response.success) {
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('phone', phone.value);
+      emit('login-success');
     } else {
-      throw new Error(response.data.error)
+      throw new Error(response.error);
     }
   } catch (err) {
-    showError('登录失败：' + (err.response?.data?.error || err.message || '未知错误'))
+    showError('登录失败：' + (err.message || '未知错误'));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 </script>
 
 <style scoped>

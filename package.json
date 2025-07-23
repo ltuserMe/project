@@ -6,12 +6,17 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint --ext .js,.ts,.vue src",
+    "lint:fix": "eslint --fix --ext .js,.ts,.vue src",
+    "format": "prettier --write \"src/**/*.{js,ts,vue,css,scss}\""
   },
   "dependencies": {
     "@vueuse/core": "^12.7.0",
     "axios": "^1.7.9",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "pinia": "^2.1.7",
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@heroicons/vue": "^2.2.0",
