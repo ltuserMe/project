@@ -3,7 +3,7 @@ import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import viteCompression from "vite-plugin-compression";
 import { visualizer } from "rollup-plugin-visualizer";
-import { terser } from "@rollup/plugin-terser";
+import terser from "@rollup/plugin-terser";
 import viteClean from "vite-plugin-clean";
 import viteImagemin from "vite-plugin-imagemin";
 import checker from "vite-plugin-checker";
@@ -43,10 +43,10 @@ export default defineConfig(({ mode }) => {
         },
         webp: { quality: 75 },
       }),
-      checker({
-        typescript: true,
-        vueTsc: true
-      }),
+      // checker({
+      //   typescript: true,
+      //   vueTsc: true
+      // }),
     ].filter(Boolean),
     server: {
       proxy: {

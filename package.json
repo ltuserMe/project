@@ -14,18 +14,26 @@
   "dependencies": {
     "@vueuse/core": "^12.7.0",
     "axios": "^1.7.9",
-    "vue": "^3.4.29",
     "pinia": "^2.1.7",
+    "vue": "^3.4.29",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@heroicons/vue": "^2.2.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@tailwindcss/postcss": "^4.0.8",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/tsconfig": "^0.7.0",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "postcss-import": "^16.1.0",
+    "rollup-plugin-visualizer": "^5.9.4",
     "tailwindcss": "^3.3.5",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "vite-plugin-checker": "^0.10.0",
+    "vite-plugin-clean": "^2.0.1",
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-imagemin": "^0.6.1",
+    "vue-tsc": "^3.0.3"
   }
 }
